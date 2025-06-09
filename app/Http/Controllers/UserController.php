@@ -10,6 +10,8 @@ use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
+
+    
     public function index()
     {
         try {
@@ -56,11 +58,11 @@ class UserController extends Controller
 
             $stmt->execute();
 
-            return response()->json(['message' => 'User created successfully!'], 201);
+            return response()->json(['message' => 'Usuário criado com sucesso.'], 201);
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Error creating user',
+                'error' => 'Erro ao criar usuário.',
                 'message' => $e->getMessage(),
             ], 500);
         }
@@ -132,19 +134,19 @@ class UserController extends Controller
             $pdo = DB::getPdo();
 
             $stmt = $pdo->prepare('DELETE FROM users WHERE id = :id');
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
 
             $stmt->execute();
 
             if ($stmt->rowCount() > 0) {
-                return response()->json(['message' => 'User deleted successfully.']);
+                return response()->json(['message' => 'Usuário deletado com sucesso.']);
             } else {
-                return response()->json(['message' => 'User not found.'], 404);
+                return response()->json(['message' => 'Usuário não encontrado.'], 404);
             }
 
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Error deleting user',
+                'error' => 'Erro',
                 'message' => $e->getMessage(),
             ], 500);
         }
@@ -161,17 +163,15 @@ class UserController extends Controller
             $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if (!$user) {
-                return response()->json(['error' => 'User not found'], 404);
+                return response()->json(['error' => 'Usuário não encontrado.'], 404);
             }
 
             return response()->json($user);
         } catch (\Exception $e) {
             return response()->json([
-                'error' => 'Error fetching user',
+                'error' => 'Erro',
                 'message' => $e->getMessage(),
             ], 500);
         }
     }
-
-
 }
