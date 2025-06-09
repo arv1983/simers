@@ -74,7 +74,18 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, $id)
     {
         try {
+        
             $pdo = DB::getPdo();
+            
+            $checkId = $pdo->prepare('SELECT id FROM users WHERE id = :id');
+            $checkId->execute([
+                ':id' => $id
+            ]);
+            if (!$checkId->fetch()) {
+                return response()->json([
+                    'error' => 'ID não encontrado.'
+                ], 422);
+            }
 
             $checkEmail = $pdo->prepare('SELECT id FROM users WHERE email = :email AND id != :id');
             $checkEmail->execute([
