@@ -48,4 +48,11 @@ class StoreUserRequest extends FormRequest
             'phone.regex' => 'The phone number must be exactly 11 digits.',
         ];
     }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'errors' => $validator->errors()
+        ], 422));
+    }
 }

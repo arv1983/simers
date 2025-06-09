@@ -32,9 +32,9 @@ class UserController extends Controller
         }
     }
 
-     public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request)
     {
-        try {
+        try {  
             $pdo = DB::getPdo();
 
             $stmt = $pdo->prepare('
@@ -74,7 +74,6 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, $id)
     {
         try {
-        
             $pdo = DB::getPdo();
             
             $checkId = $pdo->prepare('SELECT id FROM users WHERE id = :id');
