@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use Exception;
+
 
 class UserController extends Controller
 {
@@ -22,7 +24,7 @@ class UserController extends Controller
 
             return response()->json($users, 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'error' => 'Erro ao listar usuários',
                 'message' => $e->getMessage(),
@@ -51,7 +53,7 @@ class UserController extends Controller
 
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':cpf', $cpf);
-            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':email', $email) ;
             $stmt->bindParam(':password', $password);
             $stmt->bindParam(':birthday', $birthday);
             $stmt->bindParam(':phone', $phone);
@@ -60,7 +62,7 @@ class UserController extends Controller
 
             return response()->json(['message' => 'Usuário criado com sucesso.'], 201);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'error' => 'Erro ao criar usuário.',
                 'message' => $e->getMessage(),
@@ -120,7 +122,7 @@ class UserController extends Controller
 
             return response()->json(['message' => 'Usuário atualizado com sucesso.']);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'error' => 'Erro ao atualizar usuário',
                 'message' => $e->getMessage(),
@@ -144,7 +146,7 @@ class UserController extends Controller
                 return response()->json(['message' => 'Usuário não encontrado.'], 404);
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'error' => 'Erro',
                 'message' => $e->getMessage(),
@@ -167,7 +169,7 @@ class UserController extends Controller
             }
 
             return response()->json($user);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'error' => 'Erro',
                 'message' => $e->getMessage(),
