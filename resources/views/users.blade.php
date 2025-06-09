@@ -1,127 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>User Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gerenciamento de Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-<div class="container mt-5">
-    <h2 class="mb-4">User Management</h2>
+<div class="container mt-4">
+    <h1>Usuários</h1>
 
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">Add User</button>
+    <!-- Formulário para adicionar usuário -->
+    <form id="addUserForm" class="mb-4">
+        <h4>Adicionar Usuário</h4>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="name" placeholder="Nome" required />
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="cpf" placeholder="CPF (11 dígitos)" required />
+            </div>
+            <div class="col-md-4">
+                <input type="email" class="form-control" name="email" placeholder="Email" required />
+            </div>
+            <div class="col-md-4">
+                <input type="password" class="form-control" name="password" placeholder="Senha" required />
+            </div>
+            <div class="col-md-4">
+                <input type="date" class="form-control" name="birthday" placeholder="Data de Nascimento" required />
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="phone" placeholder="Telefone (11 dígitos)" required />
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Adicionar Usuário</button>
+    </form>
 
-    <table class="table table-bordered">
+    <!-- Tabela de usuários -->
+    <table class="table table-bordered" id="usersTable">
         <thead class="table-light">
-        <tr>
-            <th>Name</th>
-            <th>CPF</th>
-            <th>Email</th>
-            <th>Birthday</th>
-            <th>Phone</th>
-            <th>Actions</th>
-        </tr>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Email</th>
+                <th>Data de Nascimento</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+            </tr>
         </thead>
         <tbody>
-        @foreach($users as $user)
-            <tr data-id="{{ $user->id }}">
-                <td>{{ $user->name }}</td>
-                <td>{{ $user->cpf }}</td>
-                <td>{{ $user->email }}</td>
-                <td>{{ $user->birthday }}</td>
-                <td>{{ $user->phone }}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm edit-btn"
-                            data-id="{{ $user->id }}"
-                            data-name="{{ $user->name }}"
-                            data-cpf="{{ $user->cpf }}"
-                            data-email="{{ $user->email }}"
-                            data-birthday="{{ $user->birthday }}"
-                            data-phone="{{ $user->phone }}">
-                        Edit
-                    </button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $user->id }}">Delete</button>
-                </td>
-            </tr>
-        @endforeach
+            <!-- Usuários carregados via JS -->
         </tbody>
     </table>
 </div>
 
-<div class="modal fade" id="addUserModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form method="POST" action="{{ route('users.store') }}" class="modal-content">
-            @csrf
-            <div class="modal-header">
-                <h5 class="modal-title">Add User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                @include('users.form-fields')
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form method="POST" id="editUserForm" class="modal-content">
-            @csrf
-            @method('PUT')
-            <div class="modal-header">
-                <h5 class="modal-title">Edit User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                @include('users.form-fields', ['prefix' => 'edit'])
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-warning">Update</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <script>
-    $(function () {
-        $('.edit-btn').click(function () {
-            const user = $(this).data();
-            $('#editUserForm').attr('action', `/users/${user.id}`);
-            $('#edit_name').val(user.name);
-            $('#edit_cpf').val(user.cpf);
-            $('#edit_email').val(user.email);
-            $('#edit_birthday').val(user.birthday);
-            $('#edit_phone').val(user.phone);
-            $('#editUserModal').modal('show');
-        });
+    const apiBase = '/api/users';
 
-        $('.delete-btn').click(function () {
-            const id = $(this).data('id');
-            if (confirm('Are you sure you want to delete this user?')) {
-                $.ajax({
-                    url: `/users/${id}`,
-                    type: 'DELETE',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function () {
-                        location.reload();
-                    },
-                    error: function () {
-                        alert('Error deleting user');
-                    }
-                });
-            }
+    // Carregar usuários
+    async function loadUsers() {
+        const res = await fetch(apiBase);
+        const users = await res.json();
+        const tbody = document.querySelector('#usersTable tbody');
+        tbody.innerHTML = '';
+        users.forEach(user => {
+            tbody.innerHTML += `
+                <tr data-id="${user.id}">
+                    <td>${user.name}</td>
+                    <td>${user.cpf}</td>
+                    <td>${user.email}</td>
+                    <td>${user.birthday}</td>
+                    <td>${user.phone}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning btn-edit">Editar</button>
+                        <button class="btn btn-sm btn-danger btn-delete">Excluir</button>
+                    </td>
+                </tr>
+            `;
         });
+        attachButtonsEvents();
+    }
+
+    // Adicionar usuário
+    document.getElementById('addUserForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+        const jsonData = Object.fromEntries(data.entries());
+
+        try {
+            const res = await fetch(apiBase, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(jsonData),
+            });
+            if (!res.ok) throw await res.json();
+            form.reset();
+            await loadUsers();
+            alert('Usuário adicionado com sucesso!');
+        } catch(err) {
+            alert('Erro: ' + (err.message || JSON.stringify(err)));
+        }
     });
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    // Atachar eventos dos botões Editar/Excluir
+    function attachButtonsEvents() {
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.onclick = async function () {
+                const tr = this.closest('tr');
+                const id = tr.dataset.id;
+
+                // Exemplo simples com prompt para editar só o nome (pode ser modal)
+                const newName = prompt('Digite o novo nome:', tr.children[0].innerText);
+                if (!newName) return;
+
+                // Pode adicionar mais campos para editar aqui
+
+                try {
+                    const res = await fetch(apiBase + '/' + id, {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({name: newName}),
+                    });
+                    if (!res.ok) throw await res.json();
+                    await loadUsers();
+                    alert('Usuário atualizado com sucesso!');
+                } catch(err) {
+                    alert('Erro: ' + (err.message || JSON.stringify(err)));
+                }
+            };
+        });
+
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.onclick = async function () {
+                if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+
+                const tr = this.closest('tr');
+                const id = tr.dataset.id;
+
+                try {
+                    const res = await fetch(apiBase + '/' + id, {
+                        method: 'DELETE',
+                    });
+                    if (!res.ok) throw await res.json();
+                    await loadUsers();
+                    alert('Usuário excluído com sucesso!');
+                } catch(err) {
+                    alert('Erro: ' + (err.message || JSON.stringify(err)));
+                }
+            };
+        });
+    }
+
+    loadUsers();
+</script>
 </body>
 </html>
